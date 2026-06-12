@@ -7,7 +7,7 @@ export default function Hero({ testerCount }) {
    <p className="text-lg text-gray-300 mt-2 text-center mb-12">
     Le football ivoirien dans ta poche  
     <h1 className="text-sm text-orange-400 font-medium">
-  Bêta privée • Coupe du Monde 2026 Scores 
+  Bêta privée • Coupe du Monde 2026 Scores
 </h1>
 <h1 className="mt-1 text-green-400 text-sm font-semibold">
   Déjà {testerCount} passionnés dans la liste bêta
