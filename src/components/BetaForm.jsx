@@ -33,32 +33,53 @@ export default function BetaForm({ testerCount, onTesterAdded }) {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMessage("");
 
-    const { error } = await supabase.from("beta_testers").insert([
-      {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        favorite_club: formData.favorite_club,
-        favorite_content: formData.favorite_content,
-      },
-    ]);
-    setLoading(false);
 
-    if (error) {
-      console.error(error);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  setLoading(true);
+  setErrorMessage("");
+
+  const cleanEmail = formData.email.trim().toLowerCase();
+  const cleanPhone = formData.phone.replace(/[\s-]/g, "");
+
+  const { error } = await supabase.from("beta_testers").insert([
+    {
+      name: formData.name.trim(),
+      email: cleanEmail,
+      phone: cleanPhone,
+      favorite_club: formData.favorite_club.trim(),
+      favorite_content: formData.favorite_content,
+    },
+  ]);
+
+  setLoading(false);
+
+  if (error) {
+    console.error(error);
+
+    if (error.code === "23505") {
+      const msg = error.message.toLowerCase();
+
+      if (msg.includes("email")) {
+        setErrorMessage("Cet email est déjà inscrit à la bêta Gboro.");
+      } else if (msg.includes("phone")) {
+        setErrorMessage("Ce numéro est déjà inscrit à la bêta Gboro.");
+      } else {
+        setErrorMessage("Vous êtes déjà inscrit à la bêta Gboro.");
+      }
+    } else {
       setErrorMessage("Une erreur est survenue. Réessaie dans un instant.");
-      return;
     }
 
-    resetForm();
-    onTesterAdded();
-setShowModal(true);
-  };
+    return;
+  }
+
+  resetForm();
+  onTesterAdded();
+  setShowModal(true);
+};
 
   return (
     <>
@@ -93,13 +114,15 @@ setShowModal(true);
           />
 
           <input
-            type="text"
-            name="phone"
-            placeholder="Téléphone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full p-2.5 rounded-lg bg-[#10261d] text-sm outline-none border border-white/10 focus:border-green-500"
-          />
+  type="tel"
+  name="phone"
+  placeholder="Téléphone"
+  required
+  pattern="[0-9]{10}"
+  value={formData.phone}
+  onChange={handleChange}
+  className="w-full p-2.5 rounded-lg bg-[#10261d] text-sm outline-none border border-white/10 focus:border-green-500"
+/>
 
           <input
             type="text"
@@ -108,6 +131,7 @@ setShowModal(true);
             value={formData.favorite_club}
             onChange={handleChange}
             className="w-full p-2.5 rounded-lg bg-[#10261d] text-sm outline-none border border-white/10 focus:border-green-500"
+          required
           />
 
           <select
@@ -115,6 +139,7 @@ setShowModal(true);
             value={formData.favorite_content}
             onChange={handleChange}
             className="w-full p-2.5 rounded-lg bg-[#10261d] text-sm outline-none border border-white/10 focus:border-green-500"
+          required
           >
             <option value="">Contenu préféré</option>
             <option value="Ligue 1 Côte d’Ivoire">Ligue 1 Côte d’Ivoire</option>
@@ -153,7 +178,7 @@ setShowModal(true);
             </h3>
 
             <p className="mt-3 text-gray-300 text-sm leading-6">
-              Tu fais maintenant partie des premiers bêta-testeurs {testerCount} de Gboro.
+             La communauté bêta compte maintenant {testerCount} passionnés.
               Nous te contacterons dès que l’application sera disponible.
             </p>
 
@@ -168,4 +193,4 @@ setShowModal(true);
       )}
     </>
   );
-}
+} 
