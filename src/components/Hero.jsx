@@ -3,7 +3,7 @@ import logo from "../assets/hero.png";
 export default function Hero({ testerCount }) {
   return (
     <section className="h-[32vh] flex flex-col items-center justify-center text-center px-6 pt-4">
-  <img src={logo} alt="GBORO" className="w-70 mb-4" />
+  <img src={logo} alt="GBORO" className="w-70 mb-1" />
    <p className="text-lg text-gray-300 mt-2 text-center mb-12">
     Le football ivoirien dans ta poche  
     <h1 className="text-sm text-orange-400 font-medium">
